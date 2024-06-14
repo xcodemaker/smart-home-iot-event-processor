@@ -1,0 +1,8 @@
+{
+    "device_id": "device1",
+    "timestamp": "2024-06-12T14:30:00Z",
+    "temperature": 50,
+    "humidity": 45.2,
+    "location": "living_room"
+  }
+  

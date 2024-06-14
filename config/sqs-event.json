@@ -1,0 +1,7 @@
+{
+  "Records": [
+    {
+      "body": "{\"device_id\":\"device1\",\"timestamp\":\"2024-06-13T10:15:00Z\",\"temperature\":23.5,\"humidity\":45.2,\"location\":\"living_room\"}"
+    }
+  ]
+}

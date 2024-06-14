@@ -1,0 +1,28 @@
+{
+  "name": "smart-home-iot-event-processor",
+  "version": "1.0.0",
+  "description": "A serverless application to process events from various sources, transform the data, and store the results in DynamoDB.",
+  "main": "handler.js",
+  "scripts": {
+    "test": "jest",
+    "deploy": "serverless deploy",
+    "offline": "serverless offline"
+  },
+  "author": "Dhammika Madurapperuma",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.814.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6",
+    "aws-sdk-mock": "^5.5.0",
+    "serverless": "^2.64.1",
+    "serverless-offline": "^8.2.0"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ]
+  }
+}

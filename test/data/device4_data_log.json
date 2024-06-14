@@ -1,0 +1,9 @@
+{
+    "device_id": "device4",
+    "timestamp": "2024-06-12T14:30:00Z",
+    "air_quality_index": 30,
+    "pm2_5": 8,
+    "pm10": 15,
+    "location": "garage"
+  }
+  

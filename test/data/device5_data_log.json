@@ -1,0 +1,11 @@
+{
+    "device_id": "device5",
+    "timestamp": "2024-06-12T14:30:00Z",
+    "temperature": 21.5,
+    "humidity": 38.9,
+    "air_quality_index": 40,
+    "pm2_5": 10,
+    "pm10": 18,
+    "location": "office"
+  }
+  

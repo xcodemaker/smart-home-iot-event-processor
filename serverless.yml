@@ -1,0 +1,143 @@
+service: smart-home-iot-event-processor
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  environment:
+    DYNAMODB_TABLE: ${self:service}-table
+    SNS_TOPIC_ARN: arn:aws:sns:ap-south-1:851725220522:IOT_NOTIFICATION
+    BUCKET_NAME: smart-home-iot-logs
+  logRetentionInDays: 14  # Retain logs for 14 days
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:ListBucket
+      Resource:
+        - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}
+        - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*
+    - Effect: Allow
+      Action:
+        - sqs:SendMessage
+        - sqs:ReceiveMessage
+        - sqs:DeleteMessage
+        - sqs:GetQueueAttributes
+      Resource:
+        - arn:aws:sqs:ap-south-1:*:MyQueue
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:Query
+        - dynamodb:UpdateItem
+        - dynamodb:DescribeTable
+      Resource:
+        - arn:aws:dynamodb:ap-south-1:*:table/${self:service}-table
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource:
+        - ${self:provider.environment.SNS_TOPIC_ARN}
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+      Resource:
+        - arn:aws:logs:ap-south-1:*:* 
+
+functions:
+  processS3Event:
+    handler: src/events/s3.processS3Event
+    events:
+      - s3:
+          bucket: ${self:provider.environment.BUCKET_NAME}
+          event: s3:ObjectCreated:*
+    memorySize: 128
+    timeout: 30
+    environment:
+      LOG_LEVEL: INFO
+
+  processSQSEvent:
+    handler: src/events/sqs.processSQSEvent
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [MyQueue, Arn]
+    memorySize: 128
+    timeout: 30
+    environment:
+      LOG_LEVEL: INFO
+
+resources:
+  Resources:
+    MyQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: MyQueue
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt: [MyDLQ, Arn]
+          maxReceiveCount: 5  # Number of times a message is retried before being sent to DLQ
+
+    MyDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: MyDLQ
+
+    MyDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    ProcessS3EventAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ProcessS3EventErrors
+        MetricName: Errors
+        Namespace: AWS/Lambda
+        Statistic: Sum
+        Period: 300
+        EvaluationPeriods: 1
+        Threshold: 1
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        AlarmActions:
+          - ${self:provider.environment.SNS_TOPIC_ARN}
+        Dimensions:
+          - Name: FunctionName
+            Value:
+              Ref: ProcessS3EventLambdaFunction
+
+    ProcessSQSEventAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ProcessSQSEventErrors
+        MetricName: Errors
+        Namespace: AWS/Lambda
+        Statistic: Sum
+        Period: 300
+        EvaluationPeriods: 1
+        Threshold: 1
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        AlarmActions:
+          - ${self:provider.environment.SNS_TOPIC_ARN}
+        Dimensions:
+          - Name: FunctionName
+            Value:
+              Ref: ProcessSQSEventLambdaFunction
+
+  Outputs:
+    SNSTopicArn:
+      Value: ${self:provider.environment.SNS_TOPIC_ARN}
+      Export:
+        Name: MySNSTopicArn

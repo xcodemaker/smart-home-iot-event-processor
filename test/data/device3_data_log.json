@@ -1,0 +1,9 @@
+{
+    "device_id": "device3",
+    "timestamp": "2024-06-12T14:30:00Z",
+    "air_quality_index": 50,
+    "pm2_5": 12,
+    "pm10": 20,
+    "location": "kitchen"
+  }
+  
