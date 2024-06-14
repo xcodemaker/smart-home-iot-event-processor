@@ -101,7 +101,7 @@ The Smart Home IoT Event Processor is a serverless application designed to proce
 *   ```bash
     aws s3 cp test/data/device1_data_log.json s3://smart-home-iot-logs/device1_data_log.json
 *   ```bash 
-    aws sqs send-message --queue-url https://sqs.{AWS_REGION}.amazonaws.com/{ACCOUNT_ID}/MyQueue --message-body "{\"device_id\": \"device1\", \"timestamp\": \"2024-06-13T10:15:00Z\", \"temperature\": 80, \"humidity\": 45.2, \"location\": \"living_room\"}"
+    aws sqs send-message --queue-url https://sqs.{AWS_REGION}.amazonaws.com/{ACCOUNT_ID}/MyQueue --message-body "{\"device_id\": \"device1\", \"timestamp\": \"2024-06-13T10:15:00Z\", \"temperature\": 80, \"humidity\": 45.2, \"pm2_5\": 10, \"pm10\": 20, \"location\": \"living_room\"}"
 ### Reflection
 
 #### Challenges Faced

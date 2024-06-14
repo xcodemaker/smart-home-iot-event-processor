@@ -3,6 +3,8 @@
     "timestamp": "2024-06-12T14:30:00Z",
     "temperature": 22.8,
     "humidity": 40.1,
+    "pm2_5": 6,
+    "pm10": 20,
     "location": "bedroom"
   }
   

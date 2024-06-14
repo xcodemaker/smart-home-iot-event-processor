@@ -91,14 +91,45 @@ resources:
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: device_id
             AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: S
+          - AttributeName: temperature
+            AttributeType: N
+          - AttributeName: air_quality_index
+            AttributeType: N
         KeySchema:
-          - AttributeName: id
+          - AttributeName: device_id
             KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        GlobalSecondaryIndexes:
+          - IndexName: GSI1
+            KeySchema:
+              - AttributeName: device_id
+                KeyType: HASH
+              - AttributeName: temperature
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+          - IndexName: GSI2
+            KeySchema:
+              - AttributeName: device_id
+                KeyType: HASH
+              - AttributeName: air_quality_index
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
 
     ProcessS3EventAlarm:
       Type: AWS::CloudWatch::Alarm
