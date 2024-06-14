@@ -49,8 +49,8 @@ The Smart Home IoT Event Processor is a serverless application designed to proce
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/your-repository-link
-   cd event-processor
+   git clone https://github.com/xcodemaker/smart-home-iot-event-processor
+   cd smart-home-iot-event-processor
 1.  ```bash
     npm install
 2.  Ensure the serverless.yml file has the correct ARNs and bucket names:
@@ -62,7 +62,7 @@ The Smart Home IoT Event Processor is a serverless application designed to proce
     *   Ensure the S3 bucket name (smart-home-iot-logs) matches your existing bucket.
     
 3.  ```bash 
-        serverless deploy
+    serverless deploy
 
 4.  **Verify Deployment**
     
