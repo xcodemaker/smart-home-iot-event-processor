@@ -6,7 +6,7 @@ provider:
   region: ap-south-1
   environment:
     DYNAMODB_TABLE: ${self:service}-table
-    SNS_TOPIC_ARN: arn:aws:sns:ap-south-1:851725220522:IOT_NOTIFICATION
+    SNS_TOPIC_ARN: arn:aws:sns:ap-south-1:{ACCOUNT_ID}:IOT_NOTIFICATION # please update ACCOUNT_ID before you deploy lambda
     BUCKET_NAME: smart-home-iot-logs
   logRetentionInDays: 14  # Retain logs for 14 days
   iamRoleStatements:
